@@ -8,8 +8,8 @@
     "src"
   ],
   "scripts": {
-    "test": "mocha",
     "prepare": "husky install",
+    "test": "mocha",
     "test-cover": "nyc --reporter=lcov --reporter=text mocha"
   },
   "repository": {
