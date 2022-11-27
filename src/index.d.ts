@@ -1,19 +1,19 @@
-declare type CommandMap = {
-  set: (key: string, value: any) => void
-}
+/* eslint-disable @typescript-eslint/triple-slash-reference */
 
-type NotListed<T> = T extends keyof CommandMap ? never : T
+/// <reference path='./commands.d.ts' />
+
+type NotListed<T> = T extends keyof RedisCommands ? never : T
 
 declare type Redis = {
   /**
    * call
    */
   // if command listed, use strict arguments
-  call<CMD extends keyof CommandMap>(
+  call<CMD extends keyof RedisCommands>(
     this: void,
     cmd: CMD,
-    ...args: Parameters<CommandMap[CMD]>
-  ): ReturnType<CommandMap[CMD]>
+    ...args: Parameters<RedisCommands[CMD]>
+  ): ReturnType<RedisCommands[CMD]>
   // https://stackoverflow.com/questions/51442157/type-for-every-possible-string-value-except
   // if command not listed, fallback to any
   call<CMD extends string>(this: void, cmd: NotListed<CMD>, ...args: any[]): any
@@ -23,11 +23,11 @@ declare type Redis = {
    */
 
   // if command listed, use strict arguments
-  pcall<CMD extends keyof CommandMap>(
+  pcall<CMD extends keyof RedisCommands>(
     this: void,
     cmd: CMD,
-    ...args: Parameters<CommandMap[CMD]>
-  ): ReturnType<CommandMap[CMD]>
+    ...args: Parameters<RedisCommands[CMD]>
+  ): ReturnType<RedisCommands[CMD]>
   // if command not listed, fallback to any
   pcall<CMD extends string>(this: void, cmd: NotListed<CMD>, ...args: any[]): any
 
@@ -62,10 +62,10 @@ declare type Redis = {
   debug(x: any)
 
   // if command listed, use strict arguments
-  acl_check_cmd<CMD extends keyof CommandMap>(
+  acl_check_cmd<CMD extends keyof RedisCommands>(
     this: void,
     cmd: CMD,
-    ...args: Parameters<CommandMap[CMD]>
+    ...args: Parameters<RedisCommands[CMD]>
   ): boolean
   // if command not listed, fallback to any
   acl_check_cmd<CMD extends string>(this: void, cmd: NotListed<CMD>, ...args: any[]): boolean

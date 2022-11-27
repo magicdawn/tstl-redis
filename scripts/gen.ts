@@ -18,13 +18,13 @@ async function main() {
   let defCode = ''
 
   const cmds = Object.keys(commands) as (keyof AllCommands)[]
-  for (const cmd of cmds) {
+  loopcmd: for (const cmd of cmds) {
     const command = commands[cmd]
 
     let argsStr: string[] = []
     if (command.arguments?.length) {
-      command.arguments.forEach((arg) => {
-        let { name, type, optional = false, multiple = false } = arg
+      for (let arg of command.arguments) {
+        let { name, type, optional = false, multiple = false, token } = arg as any
 
         let tstype: string = type
         if (['string'].includes(type)) {
@@ -44,12 +44,13 @@ async function main() {
 
         //
         else if (type === 'pure-token') {
-          tstype = `"${arg.token}"`
+          tstype = `"${token}"`
         }
 
         // not supported
         else {
           console.log(cmd, type)
+          continue loopcmd
         }
 
         /**
@@ -67,12 +68,11 @@ async function main() {
         } else {
           argsStr.push(`...${name}${optional ? '?' : ''}: ${tstype}[]`)
         }
-      })
+      }
     }
 
-    defCode += `
-      ['${cmd}']: (${argsStr.join(', ')}) => void;
-    `
+    const method = cmd.toLowerCase()
+    defCode += `['${method}']: (${argsStr.join(', ')}) => any;\n`
   }
 
   let code = `
@@ -86,6 +86,9 @@ async function main() {
   `.trim()
   fs.writeFileSync(__dirname + '/../src/commands.d.ts', code)
 
-  code = format(code, { parser: 'typescript' })
+  code = format(code, {
+    ...require('../prettier.config.js'),
+    parser: 'typescript',
+  })
   fs.writeFileSync(__dirname + '/../src/commands.d.ts', code)
 }
