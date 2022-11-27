@@ -2,7 +2,11 @@
   "name": "tstl-redis",
   "version": "0.0.1",
   "description": "type definitions for redis script or function to use with typescript-to-lua",
-  "main": "index.js",
+  "main": "src/index.d.ts",
+  "types": "src/index.d.ts",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "test": "mocha",
     "prepare": "husky install",
